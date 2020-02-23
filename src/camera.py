@@ -3,59 +3,73 @@
 from io       import BytesIO
 from picamera import PiCamera
 from PIL      import Image, ImageChops
+from PIL      import ImageFilter
 from time     import sleep
 from datetime import datetime
 import math
+import statistics
+import os
 
-threshold = 400
+# constants
+threshold = 10
+prefix = "../img/"
+baseImgName = prefix + "base.jpg"
+capturedImgName = prefix + "cap{}.jpg"
 
+"""
+	Calculate if two images (a and b) are different or not
+	- apply gaussian blur to both images and resize it to a 8x8 matrix
+	- calculate the image difference by subtracting the pixel values from aij and bij
+	- calculate the pixel difference mean
+	- if the mean is bigger than the threshold, both images are considered different
+"""
 def isDiff(a, b):
-    diff = ImageChops.difference(a, b)
+    diff = ImageChops.difference(a.filter(ImageFilter.GaussianBlur(2)).resize((8,8), Image.LANCZOS), b.filter(ImageFilter.GaussianBlur(2)).resize((8,8), Image.LANCZOS))
     diffl = list(diff.getdata())
 
-    res = math.fsum(max(diffl, key = lambda i : math.fsum(i)))
+    # Converting a list of tuples to list
+    res = statistics.mean(map(math.fsum, diffl))
 
-    print("Comparacao: {}".format(res))
+    print("Image diff value: {}".format(res))
 
     return res > threshold
 
-#    for i in diffl:
-#        print (i)
-#        if math.fsum(i) > threshold:
-#            print("-> Encontrou diferenca!!")
-#            return True
-#    return False
-
-
-
-def main():
-    baseImgName = "base.jpg"
-    capturedImgName = "cap{}.jpg"
-
+"""
+"""
+def readImg(camera):
     stream = BytesIO()
+    print("-> Capturing image")
+    sleep(2)
+    camera.capture(stream, format="jpeg")
+    stream.seek(0)
+    return Image.open(stream)
+
+"""
+"""
+def saveImg(img, name):
+    if not os.path.exists(prefix):
+        os.makedirs(prefix)
+
+    img.save(name, "JPEG")
+
+"""
+"""
+def main():
     camera = PiCamera()
     camera.resolution = (1280,720)
 
-    print("-> Capturando a imagem base")
-    sleep(2)
-    camera.capture(stream, format='jpeg')
-    stream.seek(0)
-    baseImg = Image.open(stream)
+    print("-> Capturing the base image")
+    baseImg = readImg(camera)
 
-    baseImg.save(baseImgName, "JPEG")
-
+    saveImg(baseImg, baseImgName)
 
     while 1:
-        stream = BytesIO()
-        print("-> Capturando a imagem atual")
-        sleep(2)
-        camera.capture(stream, format='jpeg')
-        stream.seek(0)
-        currImg = Image.open(stream)
+        print("-> Capturing the current image")
+        currImg = readImg(camera)
 
         if isDiff(baseImg, currImg):
-            print("-> Salvando a imagem com diferenca")
-            currImg.save(capturedImgName.format(datetime.now()),"JPEG")
+            print("-> Saving the image with difference")
+            saveImg(currImg, capturedImgName.format(datetime.now()))
             baseImg = currImg
 
 
