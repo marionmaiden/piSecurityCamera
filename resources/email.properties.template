@@ -1,0 +1,9 @@
+[credentials]
+password=
+smtp=
+port=
+sender='xxx@gmail.com'
+
+[target]
+recipient='yyy@gmail.com'
+subject='Image captured!'

@@ -9,6 +9,7 @@ from datetime import datetime
 import math
 import statistics
 import os
+from emailsend import EmailSend
 
 # constants
 threshold = 10
@@ -55,21 +56,26 @@ def saveImg(img, name):
 """
 """
 def main():
+
+    email = EmailSend("../resouces/email.properties")
+
     camera = PiCamera()
     camera.resolution = (1280,720)
 
-    print("-> Capturing the base image")
+    print("-> Base image")
     baseImg = readImg(camera)
 
     saveImg(baseImg, baseImgName)
 
     while 1:
-        print("-> Capturing the current image")
+        print("-> Current image")
         currImg = readImg(camera)
 
         if isDiff(baseImg, currImg):
             print("-> Saving the image with difference")
-            saveImg(currImg, capturedImgName.format(datetime.now()))
+            filename = capturedImgName.format(datetime.now())
+            saveImg(currImg, filename)
+            email.sendEmail(filename)
             baseImg = currImg
 
 
