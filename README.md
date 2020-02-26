@@ -1,6 +1,12 @@
 # piSecurityCamera
 Security camera for raspberry pi
 
+# Important information
+
+## Enable less secure app from Gmail
+If you are using GMail as e-mail provider to send the images, please remember to enable it from logging from less secure apps by clicking on the link below and enabling the option:
+
+[https://www.google.com/settings/security/lesssecureapps]
 
 # Dependencies
 

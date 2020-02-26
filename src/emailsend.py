@@ -5,13 +5,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
-from configparser import RawConfigParser
+import ssl
+import configparser
 from datetime import datetime
 
 class EmailSend:
 
-    credentials  = "credentials"
-    passwordStr  = "password"
+    credentials  = 'credentials'
+    passwordStr  = 'password'
     smtpStr      = "smtp"
     portStr      = "port"
     senderStr    = "sender"
@@ -21,21 +22,22 @@ class EmailSend:
     subjectStr   = "subject"
 
     """
+
     """
     def __init__(self, filename):
         config = self.getEmailConfig(filename)
-        self.password = config.read(self.credentials, self.passwordStr)
-        self.smtp = config.read(self.credentials, self.smtpStr)
-        self.port = config.read(self.credentials, self.portStr)
-        self.sender = config.read(self.credentials, self.senderStr)
+        self.password = config.get(self.credentials, self.passwordStr)
+        self.smtp = config.get(self.credentials, self.smtpStr)
+        self.port = config.get(self.credentials, self.portStr)
+        self.sender = config.get(self.credentials, self.senderStr)
 
-        self.recipient = config.read(self.target, self.recipientStr)
-        self.subject = config.read(self.target, self.subjectStr)
+        self.recipient = config.get(self.target, self.recipientStr)
+        self.subject = config.get(self.target, self.subjectStr)
 
     """
     """
     def getEmailConfig(self, filename):
-        config = RawConfigParser()
+        config = configparser.ConfigParser()
         config.read(filename)
         return config
 
@@ -65,13 +67,12 @@ class EmailSend:
         # Attach payload to message
         msg.attach(payload)
 
-        print(self.smtp)
-        print(self.port)
+        context = ssl.create_default_context()
 
         # Send message
         smtp = smtplib.SMTP(self.smtp, self.port)
         smtp.ehlo()
-        smtp.starttls()
+        smtp.starttls(context = context)
         smtp.login(self.sender, self.password)
         smtp.sendmail(self.sender, self.recipient, msg.as_string())
         smtp.quit()

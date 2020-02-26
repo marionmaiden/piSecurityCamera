@@ -39,7 +39,6 @@ def isDiff(a, b):
 """
 def readImg(camera):
     stream = BytesIO()
-    print("-> Capturing image")
     sleep(2)
     camera.capture(stream, format="jpeg")
     stream.seek(0)
@@ -57,7 +56,7 @@ def saveImg(img, name):
 """
 def main():
 
-    email = EmailSend("../resouces/email.properties")
+    email = EmailSend("../resources/email.properties")
 
     camera = PiCamera()
     camera.resolution = (1280,720)
