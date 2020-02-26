@@ -9,7 +9,7 @@ from datetime import datetime
 import math
 import statistics
 import os
-from emailsend import EmailSend
+from emailsender import EmailSender
 
 # constants
 threshold = 10

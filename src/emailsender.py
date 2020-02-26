@@ -9,7 +9,7 @@ import ssl
 import configparser
 from datetime import datetime
 
-class EmailSend:
+class EmailSender:
 
     credentials  = 'credentials'
     passwordStr  = 'password'
