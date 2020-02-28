@@ -1,5 +1,8 @@
 # piSecurityCamera
-Security camera for raspberry pi
+Security camera for raspberry pi. It takes pictures at every 2 seconds and if any difference is detected between the original and the current images, it sends by e-mail with the timestamp (GMT) and stores in a google drive account (to be implemented)
+
+## Motion detection algorithm
+- To be written
 
 # Important information
 
@@ -15,4 +18,4 @@ If you are using GMail as e-mail provider to send the images, please remember to
 - Google API
    - `pip3 install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib`
 - ConfigParser (to read e-mail properties)
-   - pip3 install ConfigParser
+   - `pip3 install configparser`
