@@ -9,20 +9,21 @@ from .camera import Camera
 
 import math
 import statistics
+import src.gdrivesender
 
 class SecurityCamera(object):
 
     # constants
     storeThreshold = 15
     emailThreshold = 50
-    emailPropertiesFile = "../resources/email.properties"
+    emailPropertiesFile = "./resources/email.properties"
     prefix = "./img/"
     baseImgName = "base.jpg"
     capturedImgName = "cap{}.jpg"
 
     def __init__(self):
         self.camera = Camera()
-        # self.email = EmailSend(emailPropertiesFile)
+        self.email = EmailSender(self.emailPropertiesFile)
 
     """
     	Calculate if two images (a and b) are different or not
@@ -63,8 +64,9 @@ class SecurityCamera(object):
                 filename = self.capturedImgName.format(datetime.now())
 
                 self.camera.saveImg(self.prefix, currImg, filename)
+                src.gdrivesender.saveFile(self.prefix + filename)
                 baseImg = currImg
 
                 if difference > self.emailThreshold:
                     print("-> High threshold - sending e-mail")
-                    self.email.sendEmail(filename)
+                    self.email.sendEmail(self.prefix + filename)
