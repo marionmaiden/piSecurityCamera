@@ -14,7 +14,7 @@ The motion detection algorithm is pretty simple:
 - Then, inside an infinite loop I take another picture, called current picture
 - There is a image diff method that calculates an image difference value
    - Apply gaussian filter to both images
-   - Reduce both imates to a 8x8 pixels matrix
+   - Reduce both images to a 8x8 pixels matrix
    - calculate pixel by pixel value difference (each pixel is the sum of the three band values) between both images
    - get the average of all pixels difference
 - If this difference value is above a stablished threshold (I set as 15 but can be different), I save the image locally and inside my Google Drive. I also replace base image by current image and discard the base.
