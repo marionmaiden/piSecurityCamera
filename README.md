@@ -2,11 +2,33 @@
 Security camera for raspberry pi. It takes pictures at every 2 seconds and if any difference is detected between the original and the current images, it sends by e-mail with the timestamp (GMT) and stores in a Google Drive account
 
 ## How to run
-After installing the pip dependencies, simply call
+After installing the pip dependencies and configure e-mail credentials and google drive api credentials (see below), simply call
 
 ```
 python3 run.py
 ```
+
+## Running as a service at raspberry pi startup
+
+To create a service that automatically runs the piSecurityCamera at startup we need to create a systemd service
+
+- Create a unit file for our service `sudo nano /lib/systemd/system/picamera.service`
+- Add the following lines
+```
+[Unit]
+Description=piSecurityCamera
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/pi/piSecurityCamera
+ExecStart=/usr/bin/python3 run.py
+
+[Install]
+WantedBy=multi-user.target
+```
+- Reload the systemd by calling `sudo systemctl daemon-reload`
+
+After rebooting your security camera will start automatically
 
 ## Motion detection algorithm
 The motion detection algorithm is pretty simple:
